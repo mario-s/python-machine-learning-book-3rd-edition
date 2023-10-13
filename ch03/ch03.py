@@ -7,10 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Perceptron
 from sklearn.metrics import accuracy_score
-from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
-import matplotlib
-from distutils.version import LooseVersion
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.linear_model import SGDClassifier
@@ -21,10 +18,12 @@ from sklearn.tree import export_graphviz
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
+from plotter import plot_decision_regions
+
 # *Python Machine Learning 3rd Edition* by [Sebastian Raschka](https://sebastianraschka.com), Packt Publishing Ltd. 2019
-# 
+#
 # Code Repository: https://github.com/rasbt/python-machine-learning-book-3rd-edition
-# 
+#
 # Code License: [MIT License](https://github.com/rasbt/python-machine-learning-book-2nd-edition/blob/master/LICENSE.txt)
 
 # # Python Machine Learning - Code Examples
@@ -37,14 +36,14 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 
-# *The use of `watermark` is optional. You can install this Jupyter extension via*  
-# 
-#     conda install watermark -c conda-forge  
-# 
-# or  
-# 
-#     pip install watermark   
-# 
+# *The use of `watermark` is optional. You can install this Jupyter extension via*
+#
+#     conda install watermark -c conda-forge
+#
+# or
+#
+#     pip install watermark
+#
 # *For more information, please see: https://github.com/rasbt/watermark.*
 
 # ### Overview
@@ -103,8 +102,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3, random_state=1, stratify=y)
 
 
-
-
 print('Labels count in y:', np.bincount(y))
 print('Labels count in y_train:', np.bincount(y_train))
 print('Labels count in y_test:', np.bincount(y_test))
@@ -132,7 +129,7 @@ ppn.fit(X_train_std, y_train)
 
 
 # **Note**
-# 
+#
 # - You can replace `Perceptron(n_iter, ...)` by `Perceptron(max_iter, ...)` in scikit-learn >= 0.19. The `n_iter` parameter is used here deliberately, because some people still use scikit-learn 0.18.
 
 
@@ -155,62 +152,6 @@ print('Accuracy: %.3f' % ppn.score(X_test_std, y_test))
 
 
 
-# To check recent matplotlib compatibility
-
-
-def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
-
-    # setup marker generator and color map
-    markers = ('s', 'x', 'o', '^', 'v')
-    colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
-    cmap = ListedColormap(colors[:len(np.unique(y))])
-
-    # plot the decision surface
-    x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-    x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-    xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
-                           np.arange(x2_min, x2_max, resolution))
-    Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
-    Z = Z.reshape(xx1.shape)
-    plt.contourf(xx1, xx2, Z, alpha=0.3, cmap=cmap)
-    plt.xlim(xx1.min(), xx1.max())
-    plt.ylim(xx2.min(), xx2.max())
-
-    for idx, cl in enumerate(np.unique(y)):
-        plt.scatter(x=X[y == cl, 0], 
-                    y=X[y == cl, 1],
-                    alpha=0.8, 
-                    color=colors[idx],
-                    marker=markers[idx], 
-                    label=cl, 
-                    edgecolor='black')
-
-    # highlight test examples
-    if test_idx:
-        # plot all examples
-        X_test, y_test = X[test_idx, :], y[test_idx]
-
-        
-        if LooseVersion(matplotlib.__version__) < LooseVersion('0.3.4'):
-            plt.scatter(X_test[:, 0],
-                        X_test[:, 1],
-                        c='',
-                        edgecolor='black',
-                        alpha=1.0,
-                        linewidth=1,
-                        marker='o',
-                        s=100, 
-                        label='test set')
-        else:
-            plt.scatter(X_test[:, 0],
-                        X_test[:, 1],
-                        c='none',
-                        edgecolor='black',
-                        alpha=1.0,
-                        linewidth=1,
-                        marker='o',
-                        s=100, 
-                        label='test set')        
 
 
 # Training a perceptron model using the standardized training data:
@@ -354,13 +295,13 @@ class LogisticRegressionGD(object):
             errors = (y - output)
             self.w_[1:] += self.eta * X.T.dot(errors)
             self.w_[0] += self.eta * errors.sum()
-            
+
             # note that we compute the logistic `cost` now
             # instead of the sum of squared errors cost
             cost = -y.dot(np.log(output)) - ((1 - y).dot(np.log(1 - output)))
             self.cost_.append(cost)
         return self
-    
+
     def net_input(self, X):
         """Calculate net input"""
         return np.dot(X, self.w_[1:]) + self.w_[0]
@@ -386,7 +327,7 @@ lrgd = LogisticRegressionGD(eta=0.05, n_iter=1000, random_state=1)
 lrgd.fit(X_train_01_subset,
          y_train_01_subset)
 
-plot_decision_regions(X=X_train_01_subset, 
+plot_decision_regions(X=X_train_01_subset,
                       y=y_train_01_subset,
                       classifier=lrgd)
 
@@ -496,9 +437,9 @@ plt.show()
 svm = SVC(kernel='linear', C=1.0, random_state=1)
 svm.fit(X_train_std, y_train)
 
-plot_decision_regions(X_combined_std, 
+plot_decision_regions(X_combined_std,
                       y_combined,
-                      classifier=svm, 
+                      classifier=svm,
                       test_idx=range(105, 150))
 plt.xlabel('petal length [standardized]')
 plt.ylabel('petal width [standardized]')
@@ -589,7 +530,7 @@ plt.show()
 svm = SVC(kernel='rbf', random_state=1, gamma=100.0, C=1.0)
 svm.fit(X_train_std, y_train)
 
-plot_decision_regions(X_combined_std, y_combined, 
+plot_decision_regions(X_combined_std, y_combined,
                       classifier=svm, test_idx=range(105, 150))
 plt.xlabel('petal length [standardized]')
 plt.ylabel('petal width [standardized]')
@@ -636,8 +577,8 @@ err = [error(i) for i in x]
 
 fig = plt.figure()
 ax = plt.subplot(111)
-for i, lab, ls, c, in zip([ent, sc_ent, gini(x), err], 
-                          ['Entropy', 'Entropy (scaled)', 
+for i, lab, ls, c, in zip([ent, sc_ent, gini(x), err],
+                          ['Entropy', 'Entropy (scaled)',
                            'Gini impurity', 'Misclassification error'],
                           ['-', '-', '--', '-.'],
                           ['black', 'lightgray', 'red', 'green', 'cyan']):
@@ -661,14 +602,14 @@ plt.show()
 
 
 
-tree_model = DecisionTreeClassifier(criterion='gini', 
-                                    max_depth=4, 
+tree_model = DecisionTreeClassifier(criterion='gini',
+                                    max_depth=4,
                                     random_state=1)
 tree_model.fit(X_train, y_train)
 
 X_combined = np.vstack((X_train, X_test))
 y_combined = np.hstack((y_train, y_test))
-plot_decision_regions(X_combined, y_combined, 
+plot_decision_regions(X_combined, y_combined,
                       classifier=tree_model,
                       test_idx=range(105, 150))
 
@@ -693,16 +634,16 @@ plt.show()
 
 
 dot_data = export_graphviz(tree_model,
-                           filled=True, 
+                           filled=True,
                            rounded=True,
-                           class_names=['Setosa', 
+                           class_names=['Setosa',
                                         'Versicolor',
                                         'Virginica'],
-                           feature_names=['petal length', 
+                           feature_names=['petal length',
                                           'petal width'],
-                           out_file=None) 
-graph = graph_from_dot_data(dot_data) 
-graph.write_png('tree.png') 
+                           out_file=None)
+graph = graph_from_dot_data(dot_data)
+graph.write_png('tree.png')
 
 
 
@@ -716,12 +657,12 @@ graph.write_png('tree.png')
 
 
 forest = RandomForestClassifier(criterion='gini',
-                                n_estimators=25, 
+                                n_estimators=25,
                                 random_state=1,
                                 n_jobs=2)
 forest.fit(X_train, y_train)
 
-plot_decision_regions(X_combined, y_combined, 
+plot_decision_regions(X_combined, y_combined,
                       classifier=forest, test_idx=range(105, 150))
 
 plt.xlabel('petal length [cm]')
@@ -742,12 +683,12 @@ plt.show()
 
 
 
-knn = KNeighborsClassifier(n_neighbors=5, 
-                           p=2, 
+knn = KNeighborsClassifier(n_neighbors=5,
+                           p=2,
                            metric='minkowski')
 knn.fit(X_train_std, y_train)
 
-plot_decision_regions(X_combined_std, y_combined, 
+plot_decision_regions(X_combined_std, y_combined,
                       classifier=knn, test_idx=range(105, 150))
 
 plt.xlabel('petal length [standardized]')
@@ -764,14 +705,5 @@ plt.show()
 # ...
 
 # ---
-# 
+#
 # Readers may ignore the next cell.
-
-
-
-
-
-
-
-
-
