@@ -360,12 +360,9 @@ plt.show()
 
 
 
-lr.predict_proba(X_test_std[:3, :])
+print(f"Wahrscheinlichkeit der Klassenzugehörigkeit: {lr.predict_proba(X_test_std[:3, :])}")
 
-
-
-
-lr.predict_proba(X_test_std[:3, :]).sum(axis=1)
+print(f"Summe: {lr.predict_proba(X_test_std[:3, :]).sum(axis=1)}")
 
 
 
