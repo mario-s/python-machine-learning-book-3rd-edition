@@ -32,7 +32,7 @@ def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
                     color=colors[idx],
                     marker=markers[idx],
                     label=cl,
-                    edgecolor='black')
+                    facecolor='black')
 
     # highlight test examples
     if test_idx:
